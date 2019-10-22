@@ -97,6 +97,12 @@ git commit -a -m "release linux client $VERSION"
 git branch
 git push origin linux-client-$VERSION
 
+# Wait for the pull request to be merged before pushing to S3
+PR_NUMBER=134
+while [[ $(curl https://api.github.com/repos/Jigsaw-Code/outline-releases/pulls/$PRR_NUMBER/merge -s -o /dev/null -w "%{http_code}") -eq 404 ]]; do
+  sleep 60
+done
+
 # S3's Metrics filters don't accept special characters besides the path delimiter, so 
 # we have to publish to per-platform directories.
 # TODO(cohenjon) Remove the first line in the loop once requests to those files go to 0.
